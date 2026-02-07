@@ -14,7 +14,7 @@ export function HeroSection() {
       <div className="absolute inset-0">
         <img
           src={heroImage}
-          alt="مطعم الذواقة"
+          alt="OrderIt"
           className="h-full w-full object-cover scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-l from-brown/95 via-brown/75 to-brown/50 dark:from-black/95 dark:via-black/80 dark:to-black/60" />
@@ -41,7 +41,7 @@ export function HeroSection() {
 
           {/* Description */}
           <p className="text-xl text-cream/80 leading-relaxed max-w-xl">
-            استمتع بتجربة طعام فريدة مع أشهى المأكولات العربية التقليدية 
+            استمتع بتجربة طعام فريدة مع أشهى المأكولات العربية التقليدية
             المحضرة بعناية من أجود المكونات الطازجة
           </p>
 
@@ -54,9 +54,9 @@ export function HeroSection() {
               </Button>
             </Link>
             <Link to="/menu">
-              <Button 
-                variant="outline" 
-                size="xl" 
+              <Button
+                variant="outline"
+                size="xl"
                 className="w-full sm:w-auto border-cream/30 text-cream hover:bg-cream/10"
               >
                 <QrCode className="h-5 w-5" />

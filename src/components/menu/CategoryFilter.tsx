@@ -13,27 +13,17 @@ export function CategoryFilter({
   onSelectCategory,
 }: CategoryFilterProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-      <button
-        onClick={() => onSelectCategory(null)}
-        className={cn(
-          'shrink-0 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300',
-          selectedCategory === null
-            ? 'bg-primary text-primary-foreground shadow-gold'
-            : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-        )}
-      >
-        الكل
-      </button>
+    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x">
+      {/* Removed 'All' button for scroll-spy layout as it's less relevant */}
       {categories.map((category) => (
         <button
           key={category.id}
           onClick={() => onSelectCategory(category.id)}
           className={cn(
-            'shrink-0 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300',
+            'shrink-0 snap-start rounded-xl px-6 py-3 text-sm font-bold transition-all duration-300 border',
             selectedCategory === category.id
-              ? 'bg-primary text-primary-foreground shadow-gold'
-              : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+              ? 'bg-primary text-primary-foreground border-primary shadow-gold scale-105'
+              : 'bg-card text-muted-foreground border-border hover:border-primary/50 hover:text-foreground hover:bg-muted/50'
           )}
         >
           {category.nameAr}

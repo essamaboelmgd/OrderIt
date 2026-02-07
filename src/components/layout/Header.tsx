@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, UtensilsCrossed } from 'lucide-react';
+import { ShoppingCart, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { useState } from 'react';
@@ -24,10 +24,8 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-hero shadow-gold transition-transform group-hover:scale-105">
-            <UtensilsCrossed className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold text-foreground">مطعم الذواقة</span>
+          <img src="/logo.png" alt="OrderIt" className="h-10 w-10 rounded-xl object-contain bg-gradient-hero shadow-gold transition-transform group-hover:scale-105" />
+          <span className="text-xl font-bold text-foreground">OrderIt</span>
         </Link>
 
         {/* Desktop Navigation */}

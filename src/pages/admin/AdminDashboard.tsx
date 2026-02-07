@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  ShoppingBag, 
-  Package, 
-  FolderOpen, 
-  QrCode, 
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  Package,
+  FolderOpen,
+  QrCode,
   LogOut,
   Menu,
   X,
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
   const stats = [
     {
       title: 'إيرادات اليوم',
-      value: `${getTodayRevenue()} ر.س`,
+      value: `${getTodayRevenue()} جنية`,
       icon: DollarSign,
       color: 'bg-green-500/10 text-green-600',
     },
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-border">
-            <h1 className="text-xl font-bold text-foreground">مطعم الذواقة</h1>
+            <h1 className="text-xl font-bold text-foreground">OrderIt</h1>
             <p className="text-sm text-muted-foreground">لوحة التحكم</p>
           </div>
 

@@ -125,7 +125,7 @@ export default function ProductsManagement() {
                   <h3 className="font-bold text-foreground">{product.nameAr}</h3>
                   <p className="text-sm text-muted-foreground">{getCategoryName(product.categoryId)}</p>
                 </div>
-                <span className="text-lg font-bold text-primary">{product.price} ر.س</span>
+                <span className="text-lg font-bold text-primary">{product.price} جنية</span>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{product.descriptionAr}</p>
               <div className="flex gap-2">
@@ -197,7 +197,7 @@ export default function ProductsManagement() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium">السعر (ر.س)</label>
+                <label className="text-sm font-medium">السعر (جنية)</label>
                 <Input
                   type="number"
                   value={formData.price}

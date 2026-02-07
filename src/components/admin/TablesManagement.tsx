@@ -64,12 +64,12 @@ export default function TablesManagement() {
         </head>
         <body>
           <div class="card">
-            <h1>مطعم الذواقة</h1>
+            <h1>OrderIt</h1>
             <h2>طاولة رقم ${tableNumber}</h2>
             <div class="qr">
-              <img src="${document.getElementById(`qr-${tableNumber}`)?.querySelector('svg')?.outerHTML 
-                ? `data:image/svg+xml,${encodeURIComponent(document.getElementById(`qr-${tableNumber}`)?.querySelector('svg')?.outerHTML || '')}`
-                : ''}" width="200" height="200" />
+              <img src="${document.getElementById(`qr-${tableNumber}`)?.querySelector('svg')?.outerHTML
+          ? `data:image/svg+xml,${encodeURIComponent(document.getElementById(`qr-${tableNumber}`)?.querySelector('svg')?.outerHTML || '')}`
+          : ''}" width="200" height="200" />
             </div>
             <p>امسح الكود للطلب</p>
           </div>
@@ -108,9 +108,8 @@ export default function TablesManagement() {
         {tables.map((table) => (
           <div
             key={table.id}
-            className={`bg-card rounded-xl p-5 shadow-card transition-all ${
-              !table.isActive ? 'opacity-60' : ''
-            }`}
+            className={`bg-card rounded-xl p-5 shadow-card transition-all ${!table.isActive ? 'opacity-60' : ''
+              }`}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -128,8 +127,8 @@ export default function TablesManagement() {
             </p>
 
             {/* QR Code Preview */}
-            <div 
-              id={`qr-${table.number}`} 
+            <div
+              id={`qr-${table.number}`}
               className="bg-white rounded-lg p-3 mb-4 flex items-center justify-center"
             >
               <QRCodeSVG

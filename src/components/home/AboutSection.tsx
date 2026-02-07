@@ -18,7 +18,7 @@ export function AboutSection() {
             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
               <img
                 src={heroImage}
-                alt="مطعم الذواقة"
+                alt="OrderIt"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -44,8 +44,8 @@ export function AboutSection() {
                 قصة شغف بالطعام العربي الأصيل
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                منذ أكثر من عشر سنوات، بدأنا رحلتنا في تقديم أشهى المأكولات العربية 
-                التقليدية بلمسة عصرية. نحرص على استخدام أجود المكونات الطازجة 
+                منذ أكثر من عشر سنوات، بدأنا رحلتنا في تقديم أشهى المأكولات العربية
+                التقليدية بلمسة عصرية. نحرص على استخدام أجود المكونات الطازجة
                 ونفتخر بفريق طهاة محترفين يضعون شغفهم في كل طبق.
               </p>
             </div>

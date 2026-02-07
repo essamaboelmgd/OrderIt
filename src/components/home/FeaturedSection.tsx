@@ -51,7 +51,7 @@ export function FeaturedSection() {
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
+
                 {/* Category Badge */}
                 <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1">
                   <span className="text-xs font-medium text-foreground">{getCategoryName(product.categoryId)}</span>
@@ -70,7 +70,7 @@ export function FeaturedSection() {
                     className="w-full"
                     onClick={() => addItem(product)}
                   >
-                    أضف للسلة - {product.price} ر.س
+                    أضف للسلة - {product.price} جنية
                   </Button>
                 </div>
               </div>
@@ -90,7 +90,7 @@ export function FeaturedSection() {
                   {product.descriptionAr}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-primary">{product.price} ر.س</span>
+                  <span className="text-xl font-bold text-primary">{product.price} جنية</span>
                 </div>
               </div>
             </div>

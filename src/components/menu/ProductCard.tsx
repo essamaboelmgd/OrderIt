@@ -37,74 +37,79 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl bg-card shadow-card transition-all duration-300 hover:shadow-card-hover',
+        'group relative overflow-hidden rounded-xl md:rounded-2xl bg-card border border-border/50 shadow-sm transition-all duration-500 hover:shadow-gold/20 hover:border-primary/30 hover:-translate-y-1',
         isAdding && 'animate-scale-in'
       )}
     >
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      {/* Image Container */}
+      <div className="relative aspect-[4/3] md:aspect-[5/4] overflow-hidden">
         <img
           src={product.image}
           alt={product.nameAr}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-overlay opacity-0 transition-opacity group-hover:opacity-100" />
-        
-        {/* Prep Time Badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 backdrop-blur-sm">
-          <Clock className="h-3.5 w-3.5 text-primary" />
-          <span className="text-xs font-medium">{product.preparationTime} د</span>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-40" />
 
-        {/* Price Badge */}
-        <div className="absolute bottom-3 right-3 rounded-full bg-primary px-3 py-1.5 shadow-gold">
-          <span className="text-sm font-bold text-primary-foreground">{product.price} ر.س</span>
+        {/* Top Badges - Compact */}
+        <div className="absolute top-2 inset-x-2 flex justify-between items-start">
+          <div className="flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 backdrop-blur-md shadow-sm border border-border/50">
+            <Clock className="h-3 w-3 text-primary" />
+            <span className="text-[10px] md:text-xs font-bold">{product.preparationTime} د</span>
+          </div>
+          {/* Price Tag */}
+          <div className="rounded-full bg-primary px-2 py-0.5 md:px-3 md:py-1 shadow-gold">
+            <span className="text-xs md:text-sm font-bold text-primary-foreground">{product.price} ج</span>
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="text-lg font-bold text-foreground mb-1">{product.nameAr}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{product.descriptionAr}</p>
+      <div className="p-3 md:p-5">
+        <div className="mb-3 md:mb-4">
+          <h3 className="text-sm md:text-xl font-bold text-foreground mb-1 md:mb-2 font-display line-clamp-1">{product.nameAr}</h3>
+          <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.descriptionAr}</p>
+        </div>
 
-        {/* Add to Cart */}
-        {quantity === 0 ? (
-          <Button
-            variant="gold"
-            className="w-full"
-            onClick={handleAddToCart}
-            disabled={!product.isAvailable}
-          >
-            <Plus className="h-4 w-4" />
-            أضف للسلة
-          </Button>
-        ) : (
-          <div className="flex items-center justify-between gap-3 rounded-xl bg-muted p-1">
+        {/* Action Area */}
+        <div className="pt-0 md:pt-2">
+          {quantity === 0 ? (
             <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-lg"
-              onClick={handleDecrement}
+              size="sm"
+              className="w-full bg-foreground text-background hover:bg-primary hover:text-primary-foreground transition-colors duration-300 shadow-lg hover:shadow-gold rounded-lg md:rounded-xl font-bold text-xs md:text-sm h-8 md:h-10"
+              onClick={handleAddToCart}
+              disabled={!product.isAvailable}
             >
-              <Minus className="h-4 w-4" />
+              <Plus className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+              أضف
             </Button>
-            <span className="text-lg font-bold text-primary">{quantity}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-lg"
-              onClick={handleIncrement}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center justify-between gap-1 p-1 rounded-lg md:rounded-xl bg-muted/50 border border-border">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 md:h-10 md:w-10 rounded-md md:rounded-lg hover:bg-background hover:text-destructive hover:shadow-sm"
+                onClick={handleDecrement}
+              >
+                <Minus className="h-3 w-3 md:h-4 md:w-4" />
+              </Button>
+              <span className="text-sm md:text-lg font-bold text-foreground min-w-[1.5ch] text-center">{quantity}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 md:h-10 md:w-10 rounded-md md:rounded-lg hover:bg-background hover:text-primary hover:shadow-sm"
+                onClick={handleIncrement}
+              >
+                <Plus className="h-3 w-3 md:h-4 md:w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Unavailable Overlay */}
       {!product.isAvailable && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-          <span className="rounded-full bg-destructive px-4 py-2 text-sm font-bold text-destructive-foreground">
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-20">
+          <span className="rounded-full bg-destructive px-3 py-1 md:px-6 md:py-2 text-xs md:text-sm font-bold text-destructive-foreground shadow-lg transform -rotate-12">
             غير متوفر
           </span>
         </div>

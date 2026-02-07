@@ -52,7 +52,7 @@ export default function OrderConfirmation() {
           </div>
 
           <p className="text-muted-foreground mb-8">
-            سيتم إحضار طلبك إلى طاولتك بمجرد جاهزيته. شكراً لاختياركم مطعم الذواقة!
+            سيتم إحضار طلبك إلى طاولتك بمجرد جاهزيته. شكراً لاختياركم OrderIt!
           </p>
 
           <Link to="/menu">

@@ -1,4 +1,4 @@
-import { UtensilsCrossed, Phone, Mail, MapPin, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin, Instagram, Facebook, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Footer() {
@@ -9,10 +9,8 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-hero">
-                <UtensilsCrossed className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold">مطعم الذواقة</span>
+              <img src="/logo.png" alt="OrderIt" className="h-10 w-10 rounded-xl object-contain bg-gradient-hero" />
+              <span className="text-xl font-bold">OrderIt</span>
             </div>
             <p className="text-cream/70 text-sm leading-relaxed">
               نقدم لكم أشهى المأكولات العربية الأصيلة بجودة عالية وخدمة مميزة. تجربة طعام لا تُنسى.
@@ -87,7 +85,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-cream/10 mt-10 pt-6 text-center text-cream/50 text-sm">
-          <p>© {new Date().getFullYear()} مطعم الذواقة. جميع الحقوق محفوظة.</p>
+          <p>© {new Date().getFullYear()} OrderIt. جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </footer>

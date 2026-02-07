@@ -167,14 +167,14 @@ export default function OrderTracking() {
                     <span className="text-foreground">{item.product.nameAr}</span>
                   </div>
                   <span className="font-medium text-muted-foreground">
-                    {item.product.price * item.quantity} ر.س
+                    {item.product.price * item.quantity} جنية
                   </span>
                 </div>
               ))}
             </div>
             <div className="border-t border-border mt-4 pt-4 flex justify-between">
               <span className="font-bold text-foreground">الإجمالي</span>
-              <span className="text-xl font-bold text-primary">{order.totalAmount} ر.س</span>
+              <span className="text-xl font-bold text-primary">{order.totalAmount} جنية</span>
             </div>
           </div>
 

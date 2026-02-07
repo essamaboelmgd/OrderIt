@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, UtensilsCrossed } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAdmin } from '@/contexts/AdminContext';
@@ -41,11 +41,9 @@ export default function AdminLogin() {
         <div className="bg-card rounded-2xl shadow-lg p-8">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-hero flex items-center justify-center mb-4 shadow-gold">
-              <UtensilsCrossed className="h-8 w-8 text-primary-foreground" />
-            </div>
+            <img src="/logo.png" alt="OrderIt" className="h-16 w-16 rounded-2xl object-contain bg-gradient-hero shadow-gold mb-4" />
             <h1 className="text-2xl font-bold text-foreground">لوحة التحكم</h1>
-            <p className="text-muted-foreground mt-1">مطعم الذواقة</p>
+            <p className="text-muted-foreground mt-1">OrderIt</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

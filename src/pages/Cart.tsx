@@ -34,7 +34,7 @@ export default function Cart() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const order = createOrder(items, tableNumber, paymentMethod, orderNotes);
-    
+
     toast.success('تم إرسال طلبك بنجاح!');
     clearCart();
     navigate(`/order-tracking?id=${order.id}`);
@@ -127,7 +127,7 @@ export default function Cart() {
                       </Button>
                     </div>
                     <span className="font-bold text-primary">
-                      {item.product.price * item.quantity} ر.س
+                      {item.product.price * item.quantity} جنية
                     </span>
                   </div>
                 </div>
@@ -191,15 +191,15 @@ export default function Cart() {
               <div className="space-y-3 pt-4 border-t border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">المجموع الفرعي</span>
-                  <span className="font-medium">{totalAmount} ر.س</span>
+                  <span className="font-medium">{totalAmount} جنية</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">الضريبة (15%)</span>
-                  <span className="font-medium">{(totalAmount * 0.15).toFixed(2)} ر.س</span>
+                  <span className="font-medium">{(totalAmount * 0.15).toFixed(2)} جنية</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>الإجمالي</span>
-                  <span className="text-primary">{(totalAmount * 1.15).toFixed(2)} ر.س</span>
+                  <span className="text-primary">{(totalAmount * 1.15).toFixed(2)} جنية</span>
                 </div>
               </div>
 

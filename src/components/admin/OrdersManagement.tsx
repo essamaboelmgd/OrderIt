@@ -20,8 +20,8 @@ export default function OrdersManagement() {
   const { orders, updateOrderStatus } = useOrders();
   const [filter, setFilter] = useState<Order['status'] | 'all'>('all');
 
-  const filteredOrders = filter === 'all' 
-    ? orders 
+  const filteredOrders = filter === 'all'
+    ? orders
     : orders.filter((order) => order.status === filter);
 
   const getNextStatus = (currentStatus: Order['status']): Order['status'] | null => {
@@ -100,7 +100,7 @@ export default function OrdersManagement() {
                         {item.quantity}x {item.product.nameAr}
                       </span>
                       <span className="font-medium text-foreground">
-                        {item.product.price * item.quantity} ر.س
+                        {item.product.price * item.quantity} جنية
                       </span>
                     </div>
                   ))}
@@ -116,7 +116,7 @@ export default function OrdersManagement() {
                 {/* Footer */}
                 <div className="flex items-center justify-between pt-4 border-t border-border">
                   <div>
-                    <p className="text-lg font-bold text-primary">{order.totalAmount} ر.س</p>
+                    <p className="text-lg font-bold text-primary">{order.totalAmount} جنية</p>
                     <p className="text-xs text-muted-foreground">
                       {order.paymentMethod === 'cash' ? 'دفع عند الاستلام' : 'دفع إلكتروني'}
                     </p>
