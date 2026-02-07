@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clock, CheckCircle, ChefHat, Truck, XCircle } from 'lucide-react';
+import { Clock, CheckCircle, ChefHat, Truck, XCircle, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useOrders } from '@/contexts/OrderContext';
@@ -36,6 +36,55 @@ export default function OrdersManagement() {
     });
   };
 
+  const printReceipt = (order: Order) => {
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html dir="rtl">
+        <head>
+          <title>فاتورة طلب ${order.id}</title>
+          <style>
+            body { font-family: 'Tajawal', Arial, sans-serif; padding: 20px; max-width: 300px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 20px; border-bottom: 2px dashed #000; padding-bottom: 10px; }
+            .item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
+            .total { border-top: 2px dashed #000; margin-top: 10px; padding-top: 10px; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between; }
+            .notes { margin-top: 10px; font-size: 12px; background: #eee; padding: 5px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h2>OrderIt</h2>
+            <p>طلب #${order.id.slice(-6)}</p>
+            <p>طاولة: ${order.tableNumber}</p>
+            <p>${new Date(order.createdAt).toLocaleString('ar-SA')}</p>
+          </div>
+          <div>
+            ${order.items.map(item => `
+                <div class="item">
+                    <div style="flex: 1;">
+                        <span>${item.product.nameAr} x${item.quantity}</span>
+                        ${item.notes ? `<div style="font-size: 11px; color: #666; margin-right: 10px;">- ${item.notes}</div>` : ''}
+                    </div>
+                    <span>${item.product.price * item.quantity}</span>
+                </div>
+            `).join('')}
+          </div>
+          <div class="total">
+            <span>الإجمالي</span>
+            <span>${order.totalAmount} جنية</span>
+          </div>
+          ${order.notes ? `<div class="notes">ملاحظات: ${order.notes}</div>` : ''}
+          <script>
+            setTimeout(() => { window.print(); window.close(); }, 500);
+          </script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Filters */}
@@ -69,66 +118,91 @@ export default function OrdersManagement() {
             const status = statusConfig[order.status];
             const StatusIcon = status.icon;
             const nextStatus = getNextStatus(order.status);
+            const isLatest = new Date().getTime() - new Date(order.createdAt).getTime() < 1000 * 60 * 5;
 
             return (
               <div
                 key={order.id}
-                className="bg-card rounded-xl p-5 shadow-card hover:shadow-card-hover transition-all"
+                className={`flex flex-col bg-white text-black p-0 shadow-lg hover:shadow-xl transition-all relative overflow-hidden font-mono text-sm max-w-sm mx-auto w-full ${isLatest && order.status === 'pending' ? 'ring-4 ring-primary/30' : ''}`}
+                style={{
+                  clipPath: 'polygon(0 0, 100% 0, 100% 100%, 95% 98%, 90% 100%, 85% 98%, 80% 100%, 75% 98%, 70% 100%, 65% 98%, 60% 100%, 55% 98%, 50% 100%, 45% 98%, 40% 100%, 35% 98%, 30% 100%, 25% 98%, 20% 100%, 15% 98%, 10% 100%, 5% 98%, 0 100%)',
+                  minHeight: '400px'
+                }}
               >
-                {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <span className="text-lg font-bold text-primary">{order.tableNumber}</span>
-                    </div>
-                    <div>
-                      <p className="font-bold text-foreground">{order.id}</p>
-                      <p className="text-sm text-muted-foreground">{formatTime(order.createdAt)}</p>
+                {/* Receipt Header */}
+                <div className="bg-gray-100 p-4 border-b-2 border-dashed border-gray-300 text-center">
+                  <div className="mb-2 flex justify-center">
+                    <div className="h-10 w-10 rounded-full bg-black text-white flex items-center justify-center font-bold text-lg">
+                      {order.tableNumber}
                     </div>
                   </div>
-                  <Badge className={cn('border', status.color)}>
-                    <StatusIcon className="h-3 w-3 ml-1" />
+                  <h3 className="font-bold text-xl uppercase tracking-widest">OrderIt</h3>
+                  <p className="text-xs text-gray-500">#{order.id.slice(-6)}</p>
+                  <p className="text-xs text-gray-500">{formatTime(order.createdAt)}</p>
+                  <Badge className={cn('mt-2', status.color, "bg-opacity-20 border-0")}>
                     {status.label}
                   </Badge>
                 </div>
 
                 {/* Items */}
-                <div className="space-y-2 mb-4 max-h-32 overflow-y-auto">
+                <div className="p-4 flex-1 space-y-3">
                   {order.items.map((item, index) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {item.quantity}x {item.product.nameAr}
-                      </span>
-                      <span className="font-medium text-foreground">
-                        {item.product.price * item.quantity} جنية
-                      </span>
+                    <div key={index} className="flex justify-between items-start border-b border-gray-100 pb-2 last:border-0">
+                      <div className="flex gap-2 basis-full">
+                        <span className="font-bold w-6 text-center bg-gray-200 rounded text-xs py-1 h-fit shrink-0">{item.quantity}</span>
+                        <div className="flex flex-col flex-1">
+                          <span className="font-bold">{item.product.nameAr}</span>
+                          <span className="text-xs text-gray-500">{item.product.name}</span>
+                          {item.notes && (
+                            <div className="text-xs text-gray-600 bg-yellow-50 p-1 rounded mt-1 border border-yellow-100 flex items-start gap-1">
+                              <span className="font-bold text-[10px] shrink-0">ملاحظة:</span> <span>{item.notes}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <span className="font-bold">{item.product.price * item.quantity}</span>
                     </div>
                   ))}
+
+                  {order.notes && (
+                    <div className="bg-yellow-50 p-2 text-xs border border-yellow-100 rounded mt-4">
+                      <span className="font-bold block mb-1">ملاحظات:</span>
+                      {order.notes}
+                    </div>
+                  )}
                 </div>
 
-                {/* Notes */}
-                {order.notes && (
-                  <p className="text-sm text-muted-foreground bg-muted rounded-lg p-2 mb-4">
-                    ملاحظات: {order.notes}
-                  </p>
-                )}
 
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <div>
-                    <p className="text-lg font-bold text-primary">{order.totalAmount} جنية</p>
-                    <p className="text-xs text-muted-foreground">
-                      {order.paymentMethod === 'cash' ? 'دفع عند الاستلام' : 'دفع إلكتروني'}
-                    </p>
+                {/* Total & Actions */}
+                <div className="p-4 bg-gray-50 border-t-2 border-dashed border-gray-300">
+                  <div className="flex justify-between items-center mb-4 text-lg font-bold">
+                    <span>الإجمالي</span>
+                    <span>{order.totalAmount} جنية</span>
                   </div>
-                  {nextStatus && (
+
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
-                      size="sm"
-                      onClick={() => updateOrderStatus(order.id, nextStatus)}
+                      variant="outline"
+                      className="w-full border-black text-black hover:bg-gray-100"
+                      onClick={() => printReceipt(order)}
                     >
-                      {statusConfig[nextStatus].label}
+                      <Printer className="h-4 w-4 mr-2" />
+                      طباعة
                     </Button>
-                  )}
+
+                    {nextStatus ? (
+                      <Button
+                        className={`w-full ${nextStatus === 'preparing' ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-200 text-black hover:bg-gray-300'}`}
+                        onClick={() => updateOrderStatus(order.id, nextStatus)}
+                      >
+                        {nextStatus === 'preparing' ? 'استلام' : statusConfig[nextStatus].label}
+                      </Button>
+                    ) : (
+                      <div className="bg-green-100 text-green-800 text-center py-2 rounded font-bold text-sm">
+                        مكتمل
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );

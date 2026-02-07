@@ -11,6 +11,7 @@ interface OrderContextType {
   getPendingOrders: () => Order[];
   getTodayRevenue: () => number;
   getTodayOrdersCount: () => number;
+  completeTableOrders: (tableNumber: number) => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -65,6 +66,16 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const completeTableOrders = useCallback((tableNumber: number) => {
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.tableNumber === tableNumber && order.status !== 'completed'
+          ? { ...order, status: 'completed', updatedAt: new Date() }
+          : order
+      )
+    );
+  }, []);
+
   const getOrderById = useCallback(
     (orderId: string) => orders.find((order) => order.id === orderId),
     [orders]
@@ -106,6 +117,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         getPendingOrders,
         getTodayRevenue,
         getTodayOrdersCount,
+        completeTableOrders,
       }}
     >
       {children}

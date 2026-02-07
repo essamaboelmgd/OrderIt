@@ -10,9 +10,8 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function Cart() {
-  const { items, tableNumber, updateQuantity, removeItem, clearCart, totalAmount } = useCart();
+  const { items, tableNumber, updateQuantity, removeItem, updateItemNotes, clearCart, totalAmount } = useCart();
   const { createOrder } = useOrders();
-  const [orderNotes, setOrderNotes] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash'>('cash');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ export default function Cart() {
     // Simulate order submission
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const order = createOrder(items, tableNumber, paymentMethod, orderNotes);
+    const order = createOrder(items, tableNumber, paymentMethod);
 
     toast.success('تم إرسال طلبك بنجاح!');
     clearCart();
@@ -84,67 +83,74 @@ export default function Cart() {
             {items.map((item) => (
               <div
                 key={item.product.id}
-                className="flex gap-4 p-4 rounded-xl bg-card shadow-card"
+                className="flex flex-col gap-4 p-4 rounded-xl bg-card shadow-card"
               >
-                <img
-                  src={item.product.image}
-                  alt={item.product.nameAr}
-                  className="h-24 w-24 rounded-lg object-cover"
-                />
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-bold text-foreground">{item.product.nameAr}</h3>
-                      <p className="text-sm text-muted-foreground">{item.product.descriptionAr}</p>
+                <div className="flex gap-4">
+                  <img
+                    src={item.product.image}
+                    alt={item.product.nameAr}
+                    className="h-24 w-24 rounded-lg object-cover"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-bold text-foreground">{item.product.nameAr}</h3>
+                        <p className="text-sm text-muted-foreground">{item.product.descriptionAr}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => removeItem(item.product.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => removeItem(item.product.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex items-center gap-2 rounded-lg bg-muted p-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="w-8 text-center font-bold">{item.quantity}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <span className="font-bold text-primary">
+                        {item.product.price * item.quantity} جنية
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center gap-2 rounded-lg bg-muted p-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span className="w-8 text-center font-bold">{item.quantity}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <span className="font-bold text-primary">
-                      {item.product.price * item.quantity} جنية
-                    </span>
+                </div>
+
+                {/* Stylish Item Notes */}
+                <div className="relative">
+                  <div className="absolute top-3 right-3 text-muted-foreground">
+                    <Trash2 className="h-3 w-3 opacity-0" /> {/* Spacer */}
+                  </div>
+                  <Textarea
+                    placeholder="ملاحظات على هذا الصنف (اختياري)..."
+                    value={item.notes || ''}
+                    onChange={(e) => updateItemNotes(item.product.id, e.target.value)}
+                    className="min-h-[60px] bg-muted/30 border-dashed focus:border-solid focus:ring-0 resize-none text-sm pr-9"
+                  />
+                  <div className="absolute top-3 right-3 text-muted-foreground pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-notebook-pen"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4" /><path d="M2 6h4" /><path d="M2 10h4" /><path d="M2 14h4" /><path d="M2 18h4" /><path d="M18.4 2.6a2.17 2.17 0 0 1 3 3L16 11l-4 1 1-4Z" /></svg>
                   </div>
                 </div>
               </div>
             ))}
-
-            {/* Order Notes */}
-            <div className="p-4 rounded-xl bg-card shadow-card">
-              <label className="block font-bold text-foreground mb-2">ملاحظات الطلب</label>
-              <Textarea
-                placeholder="أضف أي ملاحظات خاصة بطلبك..."
-                value={orderNotes}
-                onChange={(e) => setOrderNotes(e.target.value)}
-                className="resize-none"
-                rows={3}
-              />
-            </div>
           </div>
 
           {/* Order Summary */}

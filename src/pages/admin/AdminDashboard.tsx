@@ -21,7 +21,6 @@ import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import OrdersManagement from '@/components/admin/OrdersManagement';
 import ProductsManagement from '@/components/admin/ProductsManagement';
-import CategoriesManagement from '@/components/admin/CategoriesManagement';
 import TablesManagement from '@/components/admin/TablesManagement';
 
 type Tab = 'dashboard' | 'orders' | 'products' | 'categories' | 'tables';
@@ -30,12 +29,20 @@ const navItems = [
   { id: 'dashboard' as Tab, label: 'لوحة التحكم', icon: LayoutDashboard },
   { id: 'orders' as Tab, label: 'الطلبات', icon: ShoppingBag },
   { id: 'products' as Tab, label: 'المنتجات', icon: Package },
-  { id: 'categories' as Tab, label: 'التصنيفات', icon: FolderOpen },
   { id: 'tables' as Tab, label: 'الطاولات', icon: QrCode },
 ];
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    return (localStorage.getItem('adminActiveTab') as Tab) || 'dashboard';
+  });
+
+  // Persist Tab Change
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    localStorage.setItem('adminActiveTab', tab);
+  };
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { logout, products, categories, tables } = useAdmin();
   const { orders, getTodayRevenue, getTodayOrdersCount, getPendingOrders } = useOrders();
@@ -79,8 +86,6 @@ export default function AdminDashboard() {
         return <OrdersManagement />;
       case 'products':
         return <ProductsManagement />;
-      case 'categories':
-        return <CategoriesManagement />;
       case 'tables':
         return <TablesManagement />;
       default:
@@ -102,6 +107,101 @@ export default function AdminDashboard() {
                   <p className="text-sm text-muted-foreground">{stat.title}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="grid gap-8 lg:grid-cols-3">
+              {/* Recent Orders */}
+              <div className="lg:col-span-2 bg-card rounded-xl shadow-card overflow-hidden">
+                <div className="p-6 border-b border-border flex items-center justify-between">
+                  <h3 className="font-bold text-lg text-foreground">أحدث الطلبات</h3>
+                  <Button variant="ghost" size="sm" onClick={() => setActiveTab('orders')}>عرض الكل</Button>
+                </div>
+                <div className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted/50">
+                        <tr className="border-b border-border text-right">
+                          <th className="p-4 font-medium text-muted-foreground">رقم الطلب</th>
+                          <th className="p-4 font-medium text-muted-foreground">الطاولة</th>
+                          <th className="p-4 font-medium text-muted-foreground">الحالة</th>
+                          <th className="p-4 font-medium text-muted-foreground">الإجمالي</th>
+                          <th className="p-4 font-medium text-muted-foreground">الوقت</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders.slice(0, 5).map((order) => (
+                          <tr key={order.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                            <td className="p-4 font-medium">#{order.id.slice(-6)}</td>
+                            <td className="p-4">{order.tableNumber}</td>
+                            <td className="p-4">
+                              <span className={cn(
+                                "px-2 py-1 rounded-full text-xs font-medium",
+                                order.status === 'completed' ? "bg-green-100 text-green-700" :
+                                  order.status === 'pending' ? "bg-yellow-100 text-yellow-700" :
+                                    "bg-blue-100 text-blue-700"
+                              )}>
+                                {order.status === 'pending' ? 'انتظار' :
+                                  order.status === 'preparing' ? 'تحضير' :
+                                    order.status === 'ready' ? 'جاهز' :
+                                      order.status === 'served' ? 'تم التقديم' : 'مكتمل'}
+                              </span>
+                            </td>
+                            <td className="p-4 font-bold">{order.totalAmount} جنية</td>
+                            <td className="p-4 text-muted-foreground">
+                              {new Date(order.createdAt).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}
+                            </td>
+                          </tr>
+                        ))}
+                        {orders.length === 0 && (
+                          <tr>
+                            <td colSpan={5} className="p-8 text-center text-muted-foreground">لا يوجد طلبات حديثة</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Popular Products (Mock Calculation for Demo) */}
+              <div className="bg-card rounded-xl shadow-card h-fit">
+                <div className="p-6 border-b border-border">
+                  <h3 className="font-bold text-lg text-foreground">الأكثر مبيعاً</h3>
+                </div>
+                <div className="p-6 space-y-6">
+                  {/* We can calculate this from real orders data */}
+                  {Array.from(
+                    orders.flatMap(o => o.items)
+                      .reduce((acc, item) => {
+                        acc.set(item.product.id, {
+                          name: item.product.nameAr,
+                          count: (acc.get(item.product.id)?.count || 0) + item.quantity,
+                          price: item.product.price
+                        });
+                        return acc;
+                      }, new Map<string, { name: string, count: number, price: number }>())
+                      .entries()
+                  )
+                    .sort((a, b) => b[1].count - a[1].count)
+                    .slice(0, 5)
+                    .map(([id, item], index) => (
+                      <div key={id} className="flex items-center gap-4">
+                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-bold text-foreground">{item.name}</p>
+                          <p className="text-xs text-muted-foreground">{item.count} طلب</p>
+                        </div>
+                        <p className="font-bold text-foreground">{item.price} ج.م</p>
+                      </div>
+                    ))}
+
+                  {orders.length === 0 && (
+                    <p className="text-center text-muted-foreground">لا توجد بيانات كافية</p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Quick Stats */}
@@ -157,7 +257,7 @@ export default function AdminDashboard() {
               <button
                 key={item.id}
                 onClick={() => {
-                  setActiveTab(item.id);
+                  handleTabChange(item.id);
                   setIsSidebarOpen(false);
                 }}
                 className={cn(
