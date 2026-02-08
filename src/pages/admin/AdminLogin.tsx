@@ -1,38 +1,36 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAdmin();
+  const { login, isAuthenticated } = useAdmin();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Redirect if already logged in
+  if (isAuthenticated) {
+    navigate('/admin');
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (login(password)) {
-        toast({
-          title: 'تم تسجيل الدخول بنجاح',
-          description: 'مرحباً بك في لوحة التحكم',
-        });
-        navigate('/admin');
-      } else {
-        toast({
-          title: 'خطأ في تسجيل الدخول',
-          description: 'كلمة المرور غير صحيحة',
-          variant: 'destructive',
-        });
-      }
-      setIsLoading(false);
-    }, 500);
+    const success = await login(password, email);
+    if (success) {
+      // Toast is handled in context, or here. Context handle it?
+      // Context has toast.
+      navigate('/admin');
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -48,6 +46,21 @@ export default function AdminLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">البريد الإلكتروني</label>
+              <div className="relative">
+                <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pr-10 h-12"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">كلمة المرور</label>
               <div className="relative">
                 <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -60,7 +73,6 @@ export default function AdminLogin() {
                   required
                 />
               </div>
-              <p className="text-xs text-muted-foreground">كلمة المرور للتجربة: admin123</p>
             </div>
 
             <Button

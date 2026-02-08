@@ -1,10 +1,14 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useToast } from '@/hooks/use-toast';
+import { authService } from '@/services/authService';
 import { Category, Product, Table } from '@/types/restaurant';
 import { categories as initialCategories, products as initialProducts } from '@/data/mockData';
 
 interface AdminContextType {
   isAuthenticated: boolean;
-  login: (password: string) => boolean;
+
+  login: (password: string, email?: string) => Promise<boolean>;
   logout: () => void;
   categories: Category[];
   products: Product[];
@@ -22,17 +26,17 @@ interface AdminContextType {
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-const ADMIN_PASSWORD = 'admin123';
 const STORAGE_KEYS = {
-  auth: 'restaurant-admin-auth',
+  auth: 'restaurant-admin-token',
   categories: 'restaurant-categories',
   products: 'restaurant-products',
   tables: 'restaurant-tables',
 };
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem(STORAGE_KEYS.auth) === 'true';
+    return !!Cookies.get(STORAGE_KEYS.auth);
   });
 
   const [categories, setCategories] = useState<Category[]>(() => {
@@ -68,18 +72,35 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEYS.tables, JSON.stringify(tables));
   }, [tables]);
 
-  const login = useCallback((password: string) => {
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      localStorage.setItem(STORAGE_KEYS.auth, 'true');
-      return true;
+  const login = useCallback(async (password: string, email: string = 'admin@admin.com') => {
+    try {
+      const response = await authService.login(email, password);
+      // The user wants to keep things in cookies
+      // We assume response.access_token is the token
+      if (response && response.access_token) {
+        Cookies.set(STORAGE_KEYS.auth, response.access_token, { expires: 7 }); // 7 days
+        setIsAuthenticated(true);
+        toast({
+          title: 'تم تسجيل الدخول بنجاح',
+          description: 'مرحباً بك في لوحة التحكم',
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Login failed:', error);
+      toast({
+        title: 'خطأ في تسجيل الدخول',
+        description: 'تأكد من البريد الإلكتروني وكلمة المرور',
+        variant: 'destructive',
+      });
+      return false;
     }
-    return false;
-  }, []);
+  }, [toast]);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
-    localStorage.removeItem(STORAGE_KEYS.auth);
+    Cookies.remove(STORAGE_KEYS.auth);
   }, []);
 
   const addCategory = useCallback((category: Omit<Category, 'id'>) => {

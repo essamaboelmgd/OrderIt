@@ -14,6 +14,10 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import OrderTracking from "./pages/OrderTracking";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import DashboardStats from "./pages/admin/DashboardStats";
+import OrdersManagement from "@/components/admin/OrdersManagement";
+import ProductsManagement from "@/components/admin/ProductsManagement";
+import TablesManagement from "@/components/admin/TablesManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,7 +43,12 @@ function AppRoutes() {
             <AdminDashboard />
           </AdminRoute>
         }
-      />
+      >
+        <Route index element={<DashboardStats />} />
+        <Route path="orders" element={<OrdersManagement />} />
+        <Route path="products" element={<ProductsManagement />} />
+        <Route path="tables" element={<TablesManagement />} />
+      </Route>
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
